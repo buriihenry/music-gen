@@ -1,6 +1,7 @@
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import React from 'react'
+import CreateSong from '~/components/create'
 import { auth } from '~/lib/auth'
 
 export default async function HomePage() {
@@ -13,6 +14,7 @@ export default async function HomePage() {
   return (
     <div>
       HomePage
+      <CreateSong />
     </div>
   )
 }
