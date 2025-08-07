@@ -15,6 +15,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb"
+import BreadcrumbPageClient from "~/components/sidebar/breadcrumb-page-client";
 
 export const metadata: Metadata = {
   title: "Music Gen",
@@ -47,7 +48,7 @@ export default function RootLayout({
                   <Breadcrumb>
                   <BreadcrumbList>
                     <BreadcrumbItem>
-                      <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                      <BreadcrumbPageClient />
                     </BreadcrumbItem>
                    
                   </BreadcrumbList>
