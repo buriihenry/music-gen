@@ -12,7 +12,7 @@ export default async function HomePage() {
         redirect("/auth/sign-in");
     }
   return (
-    <div>
+    <div className='flex min-h-screen flex-col items-center'>
       HomePage
       <CreateSong />
     </div>
