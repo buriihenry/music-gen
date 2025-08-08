@@ -15,7 +15,7 @@ export default function SidebarMenuItems() {
             active : false
         },
         {
-            title: "Inbox",
+            title: "Create",
             url: "/create",
             icon: Music,
             active: false,
