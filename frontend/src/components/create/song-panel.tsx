@@ -30,7 +30,7 @@ const styleTags = [
 ];
 
 
-export function SOngPanel(){
+export function SongPanel(){
     const [mode, setMode] = useState <"simple" | "custom">("simple");
     const [description, setDescription] = useState("");
     const [instrumental, setInstrumental] = useState(false);

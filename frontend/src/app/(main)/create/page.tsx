@@ -1,7 +1,9 @@
+import { Loader2 } from 'lucide-react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import React from 'react'
-import { SOngPanel } from '~/components/create/song-panel'
+import React, { Suspense } from 'react'
+import { SongPanel } from '~/components/create/song-panel'
+import TrackListFetcher from '~/components/create/track-list-fetch'
 import { auth } from '~/lib/auth'
 
 export default async function HomePage() {
@@ -13,8 +15,15 @@ export default async function HomePage() {
     }
   return (
     <div className='flex h-full flex-col lg:flex-row'>
-      <SOngPanel />
-   
+      <SongPanel />
+      <Suspense>
+        <TrackListFetcher fallback={<div className='flex h-4 w-full items-center justify-center' >
+          <Loader2 className='h-8 w-8 animate-spin'/>
+          </div>
+          }
+          />
+      </Suspense>
+    
     </div>
   )
 }
