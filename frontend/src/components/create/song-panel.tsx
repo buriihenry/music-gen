@@ -4,9 +4,10 @@ import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import { Plus } from "lucide-react";
+import { Loader2, Music, Plus } from "lucide-react";
 import { Switch } from "../ui/switch";
 import { Badge } from "../ui/badge";
+import { toast } from "sonner";
 
 const inspirationTags = [
   "80s synth-pop",
@@ -35,6 +36,7 @@ export function SOngPanel(){
     const [lyricsMode, setLyricsMode] = useState<"write" | "auto">("write");
     const [lyrics, setLyrics] = useState("");
     const [styleInput, setStyleInput] = useState("");
+    const [loading, setLoading] = useState(false);
 
 
     
@@ -59,6 +61,17 @@ export function SOngPanel(){
             }
         }
     };
+
+    const handleCreate = async () => {
+        if(mode === "simple" &&!description.trim()){
+            toast.error("Please describe your song before creating");
+            return
+        }
+         if(mode === "simple" &&!styleInput.trim()){
+            toast.error("Please add some styles for your song");
+            return
+        }
+    }
 
 
 
@@ -217,6 +230,18 @@ export function SOngPanel(){
                                     </TabsContent>
                     </Tabs>
 
+
+                </div>
+                <div className="border-t p-4">
+                    <Button
+                    onClick={handleCreate}
+                    disabled = {loading}
+
+                    className="w-full cursor-pointer bg-gradient-to-r from-blue-500 to-pink-500 font-medium text-white hover:from-orange-600 hover:to-pink-600"
+                    >
+                        {loading ? <Loader2 className="animate-spin" /> : <Music />}
+                        {loading ? "Creating..." : "Create"}
+                    </Button>
 
                 </div>
             </div>
