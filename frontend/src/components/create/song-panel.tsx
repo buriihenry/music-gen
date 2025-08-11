@@ -6,6 +6,7 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 import { Switch } from "../ui/switch";
+import { Badge } from "../ui/badge";
 
 const inspirationTags = [
   "80s synth-pop",
@@ -16,10 +17,37 @@ const inspirationTags = [
   "Summer beach vibe",
 ];
 
+const styleTags = [
+  "Industrial rave",
+  "Heavy bass",
+  "Orchestral",
+  "Electronic beats",
+  "Funky guitar",
+  "Soulful vocals",
+  "Ambient pads",
+];
+
+
 export function SOngPanel(){
     const [mode, setMode] = useState <"simple" | "custom">("simple");
     const [description, setDescription] = useState("");
     const [Instrumental, setInstrumental] = useState(false);
+    const [lyricsMode, setLyricsMode] = useState<"write" | "auto">("write");
+    const [lyrics, setLyrics] = useState("");
+    const [styleInput, setStyleInput] = useState("");
+
+
+    
+    const handleStyleInputTagClick = (tag: string) => {
+        const currentTags = styleInput.split(",").map((s) =>s.trim()).filter((s) => s);
+        if(!currentTags.includes(tag)){
+            if(styleInput.trim() ===""){
+                setStyleInput(tag)
+            }else{
+                setStyleInput(styleInput + ", " + tag);
+            }
+        }
+    };
 
     const handleInspirationTagClick = (tag: string) => {
         const currentTags = description.split(",").map((s) =>s.trim()).filter((s) => s);
@@ -113,16 +141,79 @@ export function SOngPanel(){
                                     Lyrics
                                     </label>
                                     <div className="flex items-center gap-1">
-                                        <Button 
+                                        <Button
+                                        variant={lyricsMode === "auto" ? "secondary": "ghost" } 
                                         size="sm" 
-                                        className="h-7 text-xs"> 
+                                        className="h-7 text-xs"
+                                        onClick={() =>{
+                                            setLyricsMode("auto");
+                                            setLyrics("");
+                                        }}
+                                        > 
                                         Auto
+
+                                        </Button>
+
+                                        <Button
+                                        variant={lyricsMode === "write" ? "secondary": "ghost" } 
+                                        size="sm" 
+                                        className="h-7 text-xs"
+                                        onClick={() =>{
+                                            setLyricsMode("write");
+                                            setLyrics("");
+                                        }}
+                                        > 
+                                        Write
 
                                         </Button>
 
                                     </div>
                                 </div>
+                                <Textarea
+                                placeholder={lyricsMode ==="write" ? "Add your own lyrics here":"Describe your lyrics, e.g a happy song about love"} 
+                                value={lyrics} 
+                                onChange={(e) =>setLyrics(e.target.value)}
+                                className="min-h-[100px] resize-none"
+                                    />
                                     </div>
+
+                                    <div className="flex items-center justify-between">
+                                    <label className="text-sm font-medium">Instrumental</label>
+                                    <Switch 
+                                    checked={Instrumental} 
+                                    onCheckedChange={setInstrumental} /> 
+
+                                    </div>
+                                    <div className="flex flex-col gap-3">
+                                        <label className="text-sm font-medium">Styles</label>
+                                        <Textarea
+                                        placeholder="Enter style tags"
+                                        value={styleInput} 
+                                        onChange={(e) =>setStyleInput(e.target.value)}
+                                        className="min-h-[60px] resize-none"
+                                        />
+                                        <div className="w-full overflow-x-auto whitespace-nowrap">
+                                            <div className="flex gap=2 pb-2">
+                                                {
+                                                    styleTags.map((tag) =>(
+                                                    <Badge 
+                                                    variant="secondary" 
+                                                    key={tag} 
+                                                    className="hover:bg-secondary/80 flex-shrink-0 cursor-pointer text-xs"
+                                                    onClick = {() => handleStyleInputTagClick(tag)
+
+                                                    }
+
+                                                    >
+                                                        {tag}
+                                                    </Badge>))
+                                                }
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
                                     </TabsContent>
                     </Tabs>
 
