@@ -8,6 +8,7 @@ import { Loader2, Music, Plus } from "lucide-react";
 import { Switch } from "../ui/switch";
 import { Badge } from "../ui/badge";
 import { toast } from "sonner";
+import { generateSong, type GenerateRequest } from "~/actions/generation";
 
 const inspirationTags = [
   "80s synth-pop",
@@ -32,7 +33,7 @@ const styleTags = [
 export function SOngPanel(){
     const [mode, setMode] = useState <"simple" | "custom">("simple");
     const [description, setDescription] = useState("");
-    const [Instrumental, setInstrumental] = useState(false);
+    const [instrumental, setInstrumental] = useState(false);
     const [lyricsMode, setLyricsMode] = useState<"write" | "auto">("write");
     const [lyrics, setLyrics] = useState("");
     const [styleInput, setStyleInput] = useState("");
@@ -65,11 +66,50 @@ export function SOngPanel(){
     const handleCreate = async () => {
         if(mode === "simple" &&!description.trim()){
             toast.error("Please describe your song before creating");
-            return
+            return;
         }
          if(mode === "simple" &&!styleInput.trim()){
             toast.error("Please add some styles for your song");
-            return
+            return;
+        }
+        //Generate song
+        let requestBody: GenerateRequest;
+        
+        if (mode==="simple"){
+            requestBody = {
+                fullDescribedSong: description,
+                instrumental,
+            }
+        }else{
+            const prompt = styleInput;
+            if(lyricsMode==="write"){
+                requestBody = {
+                    prompt,
+                    lyrics,
+                    instrumental,
+                }
+            }else{
+                 requestBody = {
+                    prompt,
+                    describedLyrics:lyrics,
+                    instrumental,
+                }
+
+            }
+        }
+        try{
+            setLoading(true)
+            await generateSong(requestBody);
+            setDescription("");
+            setLyrics("");
+            setStyleInput("");
+
+
+        }catch (error){
+            toast.error("Failed to generate song")
+
+        }finally{
+            setLoading(false)
         }
     }
 
@@ -115,7 +155,7 @@ export function SOngPanel(){
                                 <div className="flex items-center gap-2">
                                     <label className="text-sm font-medium">Instrumental</label>
                                     <Switch 
-                                    checked={Instrumental} 
+                                    checked={instrumental} 
                                     onCheckedChange={setInstrumental} /> 
 
                                 </div>
@@ -193,7 +233,7 @@ export function SOngPanel(){
                                     <div className="flex items-center justify-between">
                                     <label className="text-sm font-medium">Instrumental</label>
                                     <Switch 
-                                    checked={Instrumental} 
+                                    checked={instrumental} 
                                     onCheckedChange={setInstrumental} /> 
 
                                     </div>
