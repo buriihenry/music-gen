@@ -68,7 +68,7 @@ export function SOngPanel(){
             toast.error("Please describe your song before creating");
             return;
         }
-         if(mode === "simple" &&!styleInput.trim()){
+         if(mode === "custom" &&!styleInput.trim()){
             toast.error("Please add some styles for your song");
             return;
         }
