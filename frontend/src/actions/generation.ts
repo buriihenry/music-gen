@@ -7,6 +7,9 @@ import { aw } from "node_modules/better-auth/dist/shared/better-auth.CUMpWXN6";
 import { inngest } from "~/inngest/client";
 import { auth } from "~/lib/auth"
 import { db } from "~/server/db";
+import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3"
+import { env } from "~/env";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export interface GenerateRequest{
   prompt? : string;
@@ -50,10 +53,12 @@ export async function queueSong(
         userId: userId,
         title: title,
         prompt: generateRequest.prompt,
+        lyrics: generateRequest.lyrics,
+        describedLyrics: generateRequest.describedLyrics,
         fullDescribedSong: generateRequest.fullDescribedSong,
         instrumental: generateRequest.instrumental,
         guidanceScale: guidanceScale,
-        audioDuration: 180
+        audioDuration: 180,
 
 
     },
@@ -63,4 +68,24 @@ export async function queueSong(
     name: "generate-song-event",
     data: {songId: song.id, userId: song.userId}
   })
+}
+
+export async function getPresignedUrl(key: string){
+  const s3Client = new S3Client({
+    region: env.AWS_REGION,
+    credentials: {
+      accessKeyId: env.AWS_SECRET_ACCESS_KEY_ID,
+      secretAccessKey: env.AWS_SECRET_ACCESS_KEY_ID,
+    }
+
+  });
+  const command = new GetObjectCommand({
+    Bucket: env.S3_BUCKET_NAME,
+    Key: key
+  })
+
+  return await getSignedUrl(s3Client, command, {
+    expiresIn: 3600,
+  })
+
 }
