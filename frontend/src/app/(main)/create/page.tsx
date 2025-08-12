@@ -16,15 +16,13 @@ export default async function HomePage() {
   return (
     <div className='flex h-full flex-col lg:flex-row'>
       <SongPanel />
-      <Suspense>
-        <TrackListFetcher fallback={<div className='flex h-4 w-full items-center justify-center' >
+      <Suspense fallback={
+        <div className='flex h-4 w-full items-center justify-center'>
           <Loader2 className='h-8 w-8 animate-spin'/>
-          </div>
-          }
-          />
+        </div>
+      }>
+        <TrackListFetcher />
       </Suspense>
-    
     </div>
   )
 }
-

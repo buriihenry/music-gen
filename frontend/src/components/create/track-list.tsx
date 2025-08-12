@@ -10,6 +10,7 @@ import { renameSong, setPublishedStatus } from "~/actions/song";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { RenameDialog } from "./rename-dialogue";
 import { useRouter } from "next/navigation";
+import Image from 'next/image'
 
 export interface Track{
 
@@ -36,7 +37,15 @@ export function TrackList({tracks} : {tracks: Track[]}){
     const [trackToRename, settrackToRename] = useState <Track | null>(null);
     const router = useRouter()
 
+    // Add this state at the top with your other useState hooks:
+    const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
 
+    // Add this handler:
+    const handleImageError = (trackId: string) => {
+    setImageErrors(prev => new Set([...prev, trackId]));
+    };
+
+    
     const handleTrackSelect = async (track: Track) =>{
         if(loadingTrackId) return;
         setLoadingTrackId(track.id)
@@ -48,10 +57,10 @@ export function TrackList({tracks} : {tracks: Track[]}){
     }
 
     const handleRefresh = async () => {
-        setIsRefreshing(true)
-        router.refresh()
-        setTimeout(() => setIsRefreshing(false), 1000 )
-
+    setIsRefreshing(true)
+    setImageErrors(new Set()) // Clear image errors on refresh
+    router.refresh()
+    setTimeout(() => setIsRefreshing(false), 1000 )
     }
 
     const filteredTracks = tracks.filter((track) => 
@@ -132,14 +141,21 @@ export function TrackList({tracks} : {tracks: Track[]}){
                                                     
                                     >
                                         <div className="group relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md">
-                                            {
-                                                track.thumbnailUrl ? (
-                                                <img className="h-full w-full object-cover" src={track.thumbnailUrl}/>
-                                            ) :
-                                                (<div className="bg-muted flex h-full w-full items-center justify-center">
-                                                    <Music className="text-muted-foreground h-6 w-6"/>
-                                                </div>
-                                                )}
+                                            {track.thumbnailUrl && !imageErrors.has(track.id) ? (
+                                            <Image
+                                                className="object-cover"
+                                                src={track.thumbnailUrl}
+                                                alt={track.title ?? "Track thumbnail"}
+                                                fill
+                                                sizes="48px" // Since it's a 48px (h-12 w-12) container
+                                                onError={() => handleImageError(track.id)}
+                                                unoptimized // Temporarily disable optimization to bypass Next.js proxy
+                                            />
+                                            ) : (
+                                            <div className="bg-muted flex h-full w-full items-center justify-center">
+                                                <Music className="text-muted-foreground h-6 w-6"/>
+                                            </div>
+                                            )}
                                                 <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
                                                 {loadingTrackId ===track.id ? (<Loader2 className="animate-spin text-white"/>) : (<Play className="text-white fill-white"
                                                 />
