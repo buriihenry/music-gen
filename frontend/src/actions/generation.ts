@@ -70,6 +70,42 @@ export async function queueSong(
   })
 }
 
+export async function getPlayUrl(songId: string){
+  const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+    if(!session) redirect("/auth/sign-in");
+
+    const song = await db.song.findUniqueOrThrow({
+      where:{
+        id:songId,
+        OR: [{userId: session.user.id}, {published:true}],
+        s3key: {
+          not: null
+        }
+
+      },
+      select: {
+        s3key: true,
+      }
+
+    })
+    await db.song.update({
+      where:{
+        id:songId
+
+      },
+      data:{
+        listenCount: {
+          increment: 1,
+        }
+
+      }
+    })
+
+    return await getPresignedUrl(song.s3key!);
+}
+
 export async function getPresignedUrl(key: string){
   const s3Client = new S3Client({
     region: env.AWS_REGION,
