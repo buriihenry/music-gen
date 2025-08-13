@@ -68,6 +68,12 @@ export default function SoundBar(){
         }
     }, [track]);
 
+    useEffect(() =>{
+        if(audioRef.current){
+            audioRef.current.volume = volume[0]!/100;
+        }
+    }, [volume]);
+
     const togglePlay = async () => {
         if(!track?.url || !audioRef.current) return;
 
@@ -94,6 +100,8 @@ export default function SoundBar(){
         const seconds = Math.floor(time % 60);
         return `${minutes.toString().padStart(2, "0")}: ${seconds.toString().padStart(2, "0")}`
     };
+
+    if(!track) return null;
 
 
     return (
