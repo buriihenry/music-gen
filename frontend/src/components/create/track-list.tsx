@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { RenameDialog } from "./rename-dialogue";
 import { useRouter } from "next/navigation";
 import Image from 'next/image'
+import { usePlayerStore } from "~/stores/use-player-store";
 
 export interface Track{
 
@@ -35,7 +36,10 @@ export function TrackList({tracks} : {tracks: Track[]}){
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [loadingTrackId, setLoadingTrackId] = useState <string | null>(null);
     const [trackToRename, settrackToRename] = useState <Track | null>(null);
-    const router = useRouter()
+    const router = useRouter();
+    const setTrack = usePlayerStore((state) => state.setTrack);
+
+
 
     // Add this state at the top with your other useState hooks:
     const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
@@ -49,10 +53,17 @@ export function TrackList({tracks} : {tracks: Track[]}){
     const handleTrackSelect = async (track: Track) =>{
         if(loadingTrackId) return;
         setLoadingTrackId(track.id)
-        const playUrl = getPlayUrl(track.id);
+        const playUrl = await getPlayUrl(track.id);
         setLoadingTrackId(null);
 
-        console.log(playUrl);
+        setTrack({
+            id: track.id,
+            title: track.title,
+            url: playUrl,
+            artwork: track.thumbnailUrl,
+            prompt: track.prompt,
+            createdByUsername: track.createdByUserName,
+        })
 
     }
 
