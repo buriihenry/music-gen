@@ -4,7 +4,7 @@ import { Download, MoreHorizontal, Music, Pause, Play, Volume2 } from "lucide-re
 import { usePlayerStore } from "~/stores/use-player-store"
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Slider } from "./ui/slider";
 import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { DropdownMenuContent } from "@radix-ui/react-dropdown-menu";
@@ -13,6 +13,87 @@ export default function SoundBar(){
     const {track} = usePlayerStore();
     const [isPlaying, setIsPlaying] = useState(false);
     const [volume, setVolume] = useState([100]);
+    const [currentTime, setCurrentTIme] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const audioRef = useRef <HTMLAudioElement>(null);
+
+    useEffect (() => {
+        const audio = audioRef.current;
+        if(!audio) return;
+
+        const updateTime = () => setCurrentTIme(audio.currentTime);
+
+        const updateDuration = () =>{
+            if(!isNaN(audio.duration)){
+                setDuration(audio.duration);
+            }
+        }
+
+        const handleTrackEnd = () =>{
+
+            setIsPlaying(false);
+            setCurrentTIme(0);
+        }
+
+        audio.addEventListener("timeupdate", updateTime);
+        audio.addEventListener("loadedmetadata", updateDuration);
+        audio.addEventListener("ended", handleTrackEnd);
+
+       
+
+        return () =>{
+            audio.removeEventListener("timeupdate", updateTime);
+            audio.addEventListener("loadedmetadata", updateDuration);
+            audio.addEventListener("ended", handleTrackEnd);
+        }
+
+       }, [track]);
+    useEffect (() => {
+        if (audioRef.current && track?.url) {
+            setCurrentTIme(0);
+            setDuration(0);
+
+            audioRef.current.src = track.url;
+            audioRef.current.load();
+
+            const playPromise = audioRef.current.play();
+            if (playPromise !==undefined){
+                playPromise.then(() =>{
+                    setIsPlaying(true);
+                }).catch((error) =>{
+                    console.error("Playback failed:", error);
+                    setIsPlaying(false);
+                })
+            }
+        }
+    }, [track]);
+
+    const togglePlay = async () => {
+        if(!track?.url || !audioRef.current) return;
+
+        if (isPlaying){
+            audioRef.current.pause();
+            setIsPlaying(false);
+        } else{
+           await audioRef.current.play();
+            setIsPlaying(true);
+        }
+    }
+
+    const handleSeek = (value: number[]) =>{
+        if(audioRef.current && value[0] !== undefined) {
+            audioRef.current.currentTime = value[0]
+            setCurrentTIme(value[0])
+        }
+
+
+    }
+
+    const formatTime = (time: number) =>{
+        const minutes = Math.floor(time /60);
+        const seconds = Math.floor(time % 60);
+        return `${minutes.toString().padStart(2, "0")}: ${seconds.toString().padStart(2, "0")}`
+    };
 
 
     return (
@@ -39,7 +120,11 @@ export default function SoundBar(){
                     </div>
                     {/*Centered controls*/}
                     <div className="absolute left-1/2 -translate-x-1/2">
-                        <Button variant="ghost" size="icon">
+                        <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={togglePlay}
+                        >
                            {isPlaying? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4"/>}
 
                         </Button>
@@ -76,7 +161,25 @@ export default function SoundBar(){
 
                     </div>
                 </div>
+                <div className="flex items-center gap-1">
+                    <span className="text-muted-foreground w-8 text-right text-[10px]">
+                        {formatTime(currentTime)}
+                    </span>
+                    <Slider className="flex-1"
+                    value={[currentTime]}
+                    max= {duration || 100}
+                    step={1}
+                    onValueChange={handleSeek}
+                    />
+                    <span className="text-muted-foreground w-8 text-right text-[10px]">
+                        {formatTime(duration)}
+                    </span>
+
+
+                </div>
             </div>
+            {track?.url && (<audio ref={audioRef} src={track.url} preload="metadata"/>)}
+            
         </Card>
         </div>
     )

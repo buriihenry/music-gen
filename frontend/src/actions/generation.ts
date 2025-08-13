@@ -110,14 +110,18 @@ export async function getPresignedUrl(key: string){
   const s3Client = new S3Client({
     region: env.AWS_REGION,
     credentials: {
-      accessKeyId: env.AWS_SECRET_ACCESS_KEY_ID,
+      accessKeyId: env.AWS_ACCESS_KEY_ID,
       secretAccessKey: env.AWS_SECRET_ACCESS_KEY_ID,
     }
 
   });
+
+  const bucket = env.S3_BUCKET_NAME.trim();
+  const sanitizedKey = key.replace(/^\/+/, "");
+
   const command = new GetObjectCommand({
-    Bucket: env.S3_BUCKET_NAME,
-    Key: key
+    Bucket: bucket,
+    Key: sanitizedKey
   })
 
   return await getSignedUrl(s3Client, command, {

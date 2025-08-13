@@ -10,7 +10,6 @@ import { renameSong, setPublishedStatus } from "~/actions/song";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { RenameDialog } from "./rename-dialogue";
 import { useRouter } from "next/navigation";
-import Image from 'next/image'
 import { usePlayerStore } from "~/stores/use-player-store";
 
 export interface Track{
@@ -45,9 +44,7 @@ export function TrackList({tracks} : {tracks: Track[]}){
     const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
 
     // Add this handler:
-    const handleImageError = (trackId: string) => {
-    setImageErrors(prev => new Set([...prev, trackId]));
-    };
+   
 
     
     const handleTrackSelect = async (track: Track) =>{
@@ -153,15 +150,7 @@ export function TrackList({tracks} : {tracks: Track[]}){
                                     >
                                         <div className="group relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-md">
                                             {track.thumbnailUrl && !imageErrors.has(track.id) ? (
-                                            <Image
-                                                className="object-cover"
-                                                src={track.thumbnailUrl}
-                                                alt={track.title ?? "Track thumbnail"}
-                                                fill
-                                                sizes="48px" // Since it's a 48px (h-12 w-12) container
-                                                onError={() => handleImageError(track.id)}
-                                                unoptimized // Temporarily disable optimization to bypass Next.js proxy
-                                            />
+                                            <img className="h-full w-full object-cover" src={track.thumbnailUrl}/>
                                             ) : (
                                             <div className="bg-muted flex h-full w-full items-center justify-center">
                                                 <Music className="text-muted-foreground h-6 w-6"/>
