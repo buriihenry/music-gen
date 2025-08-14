@@ -4,7 +4,7 @@ interface PlayerTrack{
     id: string;
         title: string | null;
         url: string | null;
-        artwork: string | null;
+        artwork?: string | null;
         prompt: string | null;
         createdByUsername: string | null;
         
