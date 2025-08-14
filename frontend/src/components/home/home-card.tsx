@@ -1,7 +1,7 @@
 "use client"
 
 import type { Category, Song } from "@prisma/client"
-import { Loader2, Music, Play } from "lucide-react";
+import { Heart, Loader2, Music, Play } from "lucide-react";
 import { useState } from "react";
 import { getPlayUrl } from "~/actions/generation";
 import { usePlayerStore } from "~/stores/use-player-store";
@@ -19,6 +19,9 @@ export function SongCard({song}: {song: SongWithRelation}){
 
     const [isLoading, setIsLoading] = useState(false);
     const setTrack = usePlayerStore((state) => state.setTrack);
+    const [isLiked, setIsLiked] =useState(song._count.likes > 0 ? true : false);
+    const [likesCount, setLikeCount] = useState(song._count.likes);
+
 
     const handlePlay = async () => {
         setIsLoading(true)
@@ -58,6 +61,17 @@ export function SongCard({song}: {song: SongWithRelation}){
         </div>
 
         </div>
+        </div>
+        <h3 className="mt-2 truncate text-sm font-medium text-gray-900">{song.title}</h3>
+
+        <p className="text-xs text-blue-900">{song.user.name}</p>
+        <div className="mt-1 flex items-center justify-between text-xs text-gray-900">
+            <span>
+                {song.listenCount} listens
+            </span>
+            <button className="flex cursor-pointer items-center gap-1"> 
+                <Heart className={`h-4 w-4 ${isLiked ? "fill-red-500 text-red-500" : ""}`} /> {likesCount} likes
+            </button>
         </div>
 
         </div>
