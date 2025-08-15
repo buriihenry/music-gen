@@ -14,7 +14,7 @@ export default async function Page() {
         redirect("/auth/sign-in");
     }
 
-    const userId = session?.user.id;
+  
 
     const songs = await db.song.findMany({
       where: {
@@ -32,6 +32,12 @@ export default async function Page() {
           }
         },
         categories:true,
+        likes: session.user.id ? {
+          where: {
+            userId: session.user.id,
+          },
+
+        }:false,
       },
       orderBy:{
           createdAt: "desc"

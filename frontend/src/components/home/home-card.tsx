@@ -1,6 +1,6 @@
 "use client"
 
-import type { Category, Song } from "@prisma/client"
+import type { Category, Like, Song } from "@prisma/client"
 import { Heart, Loader2, Music, Play } from "lucide-react";
 import { useState } from "react";
 import { getPlayUrl } from "~/actions/generation";
@@ -14,13 +14,14 @@ type SongWithRelation = Song & {
     }
     categories: Category[];
     thumbnailUrl?: string| null;
+    likes? : Like [];
 }
 
 export function SongCard({song}: {song: SongWithRelation}){
 
     const [isLoading, setIsLoading] = useState(false);
     const setTrack = usePlayerStore((state) => state.setTrack);
-    const [isLiked, setIsLiked] =useState(song._count.likes > 0 ? true : false);
+    const [isLiked, setIsLiked] =useState(song.likes ? song.likes.length > 0 : false);
     const [likesCount, setLikesCount] = useState(song._count.likes);
 
 
