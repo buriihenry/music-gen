@@ -190,7 +190,7 @@ export function TrackList({tracks} : {tracks: Track[]}){
                                             size="sm"
                                             className={`cursor-pointer ${track.published ? "border-red-200":""}`}
                                             >
-                                                {track.published ? "Unpulish": "Publish"}
+                                                {track.published ? "Unpublish": "Publish"}
                                             </Button>
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
