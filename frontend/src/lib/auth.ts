@@ -7,7 +7,7 @@ import { polar, checkout, portal, webhooks } from "@polar-sh/better-auth";
 // If your Prisma file is located elsewhere, you can change the path
 
  const polarClient = new Polar({
-    accessToken: env.POLAR_ACCESS_TOKEN as string,
+    accessToken: env.POLAR_ACCESS_TOKEN,
     server: 'sandbox'
 });
 
@@ -45,7 +45,7 @@ export const auth = betterAuth({
                 }),
                 portal(),
                 webhooks({
-                  secret: env.POLAR_WEBHOOK_SECRET as string,
+                  secret: env.POLAR_WEBHOOK_SECRET,
                   onOrderPaid: async (order) =>{
                     const externalCustomerId = order.data.customer.externalId;
 
