@@ -11,22 +11,22 @@ import { toast } from "sonner";
 import { generateSong, type GenerateRequest } from "~/actions/generation";
 
 const inspirationTags = [
-  "80s synth-pop",
-  "Acoustic ballad",
-  "Epic movie score",
-  "Lo-fi hip hop",
-  "Driving rock anthem",
-  "Summer beach vibe",
+  "80s Synth-Pop",
+  "Acoustic Ballad",
+  "Epic Movie Score",
+  "Lo-Fi Hip Hop",
+  "Driving Rock Anthem",
+  "Summer Beach Vibe",
 ];
 
 const styleTags = [
-  "Industrial rave",
-  "Heavy bass",
+  "Industrial Rave",
+  "Heavy Bass",
   "Orchestral",
-  "Electronic beats",
-  "Funky guitar",
-  "Soulful vocals",
-  "Ambient pads",
+  "Electronic Beats",
+  "Funky Guitar",
+  "Soulful Vocals",
+  "Ambient Pads",
 ];
 
 
